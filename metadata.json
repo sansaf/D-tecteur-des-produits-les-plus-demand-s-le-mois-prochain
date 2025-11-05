@@ -1,0 +1,5 @@
+{
+  "name": "Analyseur de Tendances Mondiales",
+  "description": "Une application web pour identifier les produits qui seront les plus demandés dans le monde le mois prochain, en utilisant l'IA pour analyser les tendances de consommation.",
+  "requestFramePermissions": []
+}

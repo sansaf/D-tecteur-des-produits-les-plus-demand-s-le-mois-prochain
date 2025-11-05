@@ -1,0 +1,41 @@
+
+import React from 'react';
+import { Sector } from '../types';
+import { ProductIcon, TrendIcon, GlobeIcon, LightbulbIcon } from './IconComponents';
+
+interface SectorCardProps {
+  sector: Sector;
+}
+
+const SectorCard: React.FC<SectorCardProps> = ({ sector }) => {
+  return (
+    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
+      <h3 className="text-2xl font-bold text-cyan-400 mb-6">{sector.sectorName}</h3>
+      <div className="space-y-6">
+        {sector.products.map((product, index) => (
+          <div key={index} className="border-l-4 border-cyan-500 pl-4 py-2 bg-gray-900/40 rounded-r-lg">
+            <div className="flex justify-between items-start mb-3">
+              <h4 className="text-lg font-semibold text-white flex items-center gap-2"><ProductIcon className="w-5 h-5 text-cyan-400"/> {product.name}</h4>
+              <div className="flex items-center gap-2 text-lg font-bold text-green-400 bg-green-900/50 px-3 py-1 rounded-full">
+                <TrendIcon className="w-5 h-5" />
+                <span>{product.demandRate}%</span>
+              </div>
+            </div>
+            <div className="text-gray-300 space-y-2 text-sm">
+              <p className="flex items-start gap-2">
+                <GlobeIcon className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
+                <strong>Régions clés :</strong> {product.regions}
+              </p>
+              <p className="flex items-start gap-2">
+                <LightbulbIcon className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
+                <strong>Raisons :</strong> {product.reasons}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default SectorCard;
