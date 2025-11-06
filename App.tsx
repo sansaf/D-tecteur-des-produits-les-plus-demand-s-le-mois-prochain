@@ -1,14 +1,20 @@
 
 import React, { useState, useCallback } from 'react';
-import { generateTrendReport } from './services/geminiService';
-import { ReportData } from './types';
+import { generateTrendReport, generateDetailedAnalysis } from './services/geminiService';
+import { ReportData, DetailedSectorAnalysis } from './types';
 import SectorCard from './components/SectorCard';
 import LoadingSpinner from './components/LoadingSpinner';
+import DetailedAnalysisModal from './components/DetailedAnalysisModal';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
+  const [modalData, setModalData] = useState<DetailedSectorAnalysis | null>(null);
+  const [modalError, setModalError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   
   const handleGenerateReport = useCallback(async () => {
     setIsLoading(true);
@@ -23,6 +29,27 @@ const App: React.FC = () => {
       setIsLoading(false);
     }
   }, []);
+
+  const handleAnalyzeSector = useCallback(async (sectorName: string) => {
+    setIsModalOpen(true);
+    setIsModalLoading(true);
+    setModalData(null);
+    setModalError(null);
+    try {
+      const data = await generateDetailedAnalysis(sectorName);
+      setModalData(data);
+    } catch (err: any) {
+      setModalError(err.message || "Erreur lors de la génération de l'analyse détaillée.");
+    } finally {
+      setIsModalLoading(false);
+    }
+  }, []);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalData(null);
+    setModalError(null);
+  };
 
   const getNextMonthName = () => {
     const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
@@ -74,9 +101,9 @@ const App: React.FC = () => {
 
             {reportData && (
                 <div className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {reportData.sectors.map((sector) => (
-                            <SectorCard key={sector.sectorName} sector={sector} />
+                            <SectorCard key={sector.sectorName} sector={sector} onAnalyze={handleAnalyzeSector} />
                         ))}
                     </div>
                     
@@ -97,6 +124,14 @@ const App: React.FC = () => {
                 </div>
             )}
         </main>
+        {isModalOpen && (
+            <DetailedAnalysisModal 
+            isLoading={isModalLoading}
+            analysisData={modalData}
+            error={modalError}
+            onClose={handleCloseModal}
+            />
+        )}
     </div>
   );
 };

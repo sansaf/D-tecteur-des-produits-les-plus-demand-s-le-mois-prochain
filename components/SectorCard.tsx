@@ -5,13 +5,14 @@ import { ProductIcon, TrendIcon, GlobeIcon, LightbulbIcon } from './IconComponen
 
 interface SectorCardProps {
   sector: Sector;
+  onAnalyze: (sectorName: string) => void;
 }
 
-const SectorCard: React.FC<SectorCardProps> = ({ sector }) => {
+const SectorCard: React.FC<SectorCardProps> = ({ sector, onAnalyze }) => {
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
+    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 shadow-lg transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full">
       <h3 className="text-2xl font-bold text-cyan-400 mb-6">{sector.sectorName}</h3>
-      <div className="space-y-6">
+      <div className="space-y-6 flex-grow">
         {sector.products.map((product, index) => (
           <div key={index} className="border-l-4 border-cyan-500 pl-4 py-2 bg-gray-900/40 rounded-r-lg">
             <div className="flex justify-between items-start mb-3">
@@ -33,6 +34,14 @@ const SectorCard: React.FC<SectorCardProps> = ({ sector }) => {
             </div>
           </div>
         ))}
+      </div>
+       <div className="mt-6 text-right">
+        <button
+          onClick={() => onAnalyze(sector.sectorName)}
+          className="bg-cyan-600/50 text-cyan-200 font-semibold py-2 px-5 rounded-lg hover:bg-cyan-600/80 hover:text-white transition-all duration-300 ease-in-out text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/70"
+        >
+          Analyse Détaillée
+        </button>
       </div>
     </div>
   );

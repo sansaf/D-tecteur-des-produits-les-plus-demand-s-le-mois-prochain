@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { ReportData } from '../types';
+import { ReportData, DetailedSectorAnalysis } from '../types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -49,53 +49,72 @@ const trendReportSchema = {
     },
     globalAnalysis: {
       type: Type.STRING,
-      description: "Analyse globale de 150 mots maximum résumant les dynamiques du marché et les secteurs porteurs."
+      description: "Une analyse globale et synthétique des tendances du marché pour le mois prochain."
     }
   },
   required: ["sectors", "globalAnalysis"]
 };
 
+export async function generateTrendReport(): Promise<ReportData> {
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: "Analyse les tendances de consommation mondiales et identifie les produits qui seront les plus demandés le mois prochain. Fournis une analyse pour 3 à 5 secteurs clés, avec 3 produits par secteur. Pour chaque produit, estime le taux de demande, les régions clés et les raisons de cette tendance. Termine par une analyse globale du marché.",
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: trendReportSchema,
+      },
+    });
 
-export const generateTrendReport = async (): Promise<ReportData> => {
-    const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-    const now = new Date();
-    // Get next month, handling year change
-    const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const nextMonthName = monthNames[nextMonthDate.getMonth()];
-    const year = nextMonthDate.getFullYear();
+    const jsonText = response.text.trim();
+    const data = JSON.parse(jsonText);
+    return data as ReportData;
 
-    const prompt = `
-        En tant qu'expert international en analyse de tendances de consommation, identifie les produits qui seront les plus demandés dans le monde pour ${nextMonthName} ${year}.
+  } catch (error) {
+    console.error("Error generating trend report:", error);
+    throw new Error("Impossible de générer le rapport de tendances. L'API a peut-être renvoyé une réponse inattendue.");
+  }
+}
 
-        Tâche :
-        - Classe les produits par secteur de consommation (technologie, maison & déco, beauté, mode, sport, alimentation, santé, divertissement).
-        - Pour chaque secteur, donne les 3 produits les plus susceptibles d’être achetés, leur taux de demande estimé (en %), les régions du monde à plus forte demande, et les raisons clés.
-        - Termine par une analyse globale (150 mots max) sur les dynamiques générales du marché et les secteurs les plus porteurs.
+const detailedAnalysisSchema = {
+    type: Type.OBJECT,
+    properties: {
+        sectorName: { type: Type.STRING, description: "Le nom du secteur analysé." },
+        inDepthAnalysis: { type: Type.STRING, description: "Une analyse approfondie du secteur, couvrant les dynamiques du marché, les opportunités émergentes et les défis potentiels." },
+        productSuggestions: {
+            type: Type.ARRAY,
+            description: "Une liste de 5 suggestions de produits spécifiques à vendre dans ce secteur.",
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    name: { type: Type.STRING, description: "Nom du produit suggéré." },
+                    targetAudience: { type: Type.STRING, description: "Description du public cible pour ce produit." },
+                    sellingPoints: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Arguments de vente clés pour le produit." },
+                    priceRange: { type: Type.STRING, description: "Fourchette de prix suggérée (ex: '€50 - €150')." },
+                    suppliers: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Une liste de 2-3 exemples de fournisseurs potentiels ou de pôles de fabrication pour ce produit." },
+                },
+                required: ["name", "targetAudience", "sellingPoints", "priceRange", "suppliers"]
+            }
+        }
+    },
+    required: ["sectorName", "inDepthAnalysis", "productSuggestions"]
+};
 
-        Contraintes :
-        - Ton professionnel, clair et synthétique.
-        - Utilise des pourcentages crédibles basés sur des tendances observables.
-        - Mets en évidence les signaux émergents (nouvelles habitudes, innovations, influence des réseaux sociaux).
-        - Fournis la réponse exclusivement au format JSON en respectant le schéma fourni.
-    `;
-    
+export async function generateDetailedAnalysis(sectorName: string): Promise<DetailedSectorAnalysis> {
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt,
+            model: 'gemini-2.5-pro',
+            contents: `Fournis une analyse détaillée pour le secteur "${sectorName}". L'analyse doit inclure une vue d'ensemble approfondie du marché, les opportunités, les défis. Suggère également 5 produits spécifiques à vendre, avec pour chacun : un public cible, des arguments de vente clés, une fourchette de prix, et une liste de 2-3 exemples des meilleurs fournisseurs ou pôles de fabrication.`,
             config: {
                 responseMimeType: "application/json",
-                responseSchema: trendReportSchema,
-                temperature: 0.5,
+                responseSchema: detailedAnalysisSchema,
             },
         });
-
         const jsonText = response.text.trim();
-        const reportData: ReportData = JSON.parse(jsonText);
-        return reportData;
-
+        const data = JSON.parse(jsonText);
+        return data as DetailedSectorAnalysis;
     } catch (error) {
-        console.error("Error generating trend report:", error);
-        throw new Error("Impossible de générer le rapport. Veuillez vérifier votre connexion ou la clé API.");
+        console.error(`Error generating detailed analysis for ${sectorName}:`, error);
+        throw new Error(`Impossible de générer l'analyse détaillée pour le secteur ${sectorName}.`);
     }
-};
+}

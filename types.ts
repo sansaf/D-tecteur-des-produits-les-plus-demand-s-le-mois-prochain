@@ -15,3 +15,17 @@ export interface ReportData {
   sectors: Sector[];
   globalAnalysis: string;
 }
+
+export interface DetailedProductSuggestion {
+  name: string;
+  targetAudience: string;
+  sellingPoints: string[];
+  priceRange: string;
+  suppliers: string[];
+}
+
+export interface DetailedSectorAnalysis {
+  sectorName: string;
+  inDepthAnalysis: string;
+  productSuggestions: DetailedProductSuggestion[];
+}
