@@ -2,8 +2,8 @@ import { ReportData, DetailedSectorAnalysis, ProductAnalysis } from '../types';
 
 type TFunction = (key: string, replacements?: Record<string, string | number>) => string;
 
-function escapeCsvCell(cell: string | number): string {
-  const cellStr = String(cell);
+function escapeCsvCell(cell: string | number | string[]): string {
+  const cellStr = Array.isArray(cell) ? cell.join('; ') : String(cell);
   if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
     return `"${cellStr.replace(/"/g, '""')}"`;
   }
@@ -29,8 +29,10 @@ export function exportReportToCsv(data: ReportData, period: number, t: TFunction
     t('csv.report.sector'),
     t('csv.report.product'),
     t('csv.report.demandRate'),
+    t('csv.report.profitabilityScore'),
     t('csv.report.keyRegions'),
-    t('csv.report.reasons')
+    t('csv.report.reasons'),
+    t('csv.report.suppliers')
   ].join(',');
   let csvRows = [headers];
 
@@ -40,8 +42,10 @@ export function exportReportToCsv(data: ReportData, period: number, t: TFunction
         escapeCsvCell(sector.sectorName),
         escapeCsvCell(product.name),
         escapeCsvCell(product.demandRate),
+        escapeCsvCell(product.profitabilityScore),
         escapeCsvCell(product.regions),
-        escapeCsvCell(product.reasons)
+        escapeCsvCell(product.reasons),
+        escapeCsvCell(product.suppliers)
       ].join(',');
       csvRows.push(row);
     });
@@ -62,20 +66,26 @@ export function exportDetailedAnalysisToCsv(data: DetailedSectorAnalysis, t: TFu
   csvRows.push('');
   const headers = [
     t('csv.detailed.productSuggestions'),
+    t('csv.detailed.description'),
     t('csv.detailed.targetAudience'),
     t('csv.detailed.sellingPoints'),
     t('csv.detailed.priceRange'),
-    t('csv.detailed.potentialSuppliers')
+    t('csv.detailed.potentialSuppliers'),
+    t('csv.detailed.profitabilityScore'),
+    t('csv.detailed.marketEntryDifficulty')
   ].join(',');
   csvRows.push(headers);
 
   data.productSuggestions.forEach(product => {
     const row = [
       escapeCsvCell(product.name),
+      escapeCsvCell(product.description),
       escapeCsvCell(product.targetAudience),
       escapeCsvCell(product.sellingPoints.join('; ')),
       escapeCsvCell(product.priceRange),
-      escapeCsvCell(product.suppliers.join('; '))
+      escapeCsvCell(product.suppliers.join('; ')),
+      escapeCsvCell(product.profitabilityScore),
+      escapeCsvCell(product.marketEntryDifficulty)
     ].join(',');
     csvRows.push(row);
   });

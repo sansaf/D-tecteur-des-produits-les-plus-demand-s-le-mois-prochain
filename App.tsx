@@ -5,17 +5,14 @@ import LoadingSpinner from './components/LoadingSpinner';
 import DetailedAnalysisModal from './components/DetailedAnalysisModal';
 import ProductAnalysisModal from './components/ProductAnalysisModal';
 import SubscriptionModal from './components/SubscriptionModal';
-import { ReportData, DetailedSectorAnalysis, ProductAnalysis } from './types';
+import UserSettingsModal from './components/UserSettingsModal';
+import AuthModal from './components/AuthModal';
+import Toast from './components/Toast';
+import { ReportData, DetailedSectorAnalysis, ProductAnalysis, User } from './types';
 import { generateTrendReport, generateDetailedAnalysis, generateProductAnalysis } from './services/geminiService';
 import { exportReportToCsv } from './utils/csvExporter';
-import { DownloadIcon, GoogleIcon, BrainIcon, ChartPieIcon, DocumentReportIcon } from './components/IconComponents';
+import { DownloadIcon, BrainIcon, ChartPieIcon, DocumentReportIcon, ChevronDownIcon, ChevronUpIcon, RefreshIcon, CogIcon, ArrowRightOnRectangleIcon } from './components/IconComponents';
 import { useI18n } from './hooks/useI18n';
-
-interface User {
-  name: string;
-  picture: string;
-  subscription: 'free' | 'premium';
-}
 
 function App() {
   const { t, lang, setLang } = useI18n();
@@ -28,7 +25,16 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ type: 'analyze_sector', payload: string } | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const [isAdvancedOptionsOpen, setIsAdvancedOptionsOpen] = useState(false);
+  const [customRegions, setCustomRegions] = useState('');
+  const [customKeywords, setCustomKeywords] = useState('');
+  const [customExcludedKeywords, setCustomExcludedKeywords] = useState('');
+  const [customIndustries, setCustomIndustries] = useState('');
 
   const [detailedAnalysisModal, setDetailedAnalysisModal] = useState<{
     isOpen: boolean;
@@ -49,22 +55,40 @@ function App() {
     }
   }, []);
 
+  const handleAnalyzeSector = useCallback(async (sectorName: string, force: boolean = false) => {
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    if (!force && user?.subscription !== 'premium') {
+      setPendingAction({ type: 'analyze_sector', payload: sectorName });
+      setIsSubscriptionModalOpen(true);
+      return;
+    }
+
+    setDetailedAnalysisModal({ isOpen: true, data: null, isLoading: true });
+    try {
+      const data = await generateDetailedAnalysis(sectorName, selectedPeriod, lang);
+      setDetailedAnalysisModal({ isOpen: true, data: data, isLoading: false });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred while analyzing the sector.');
+      setDetailedAnalysisModal({ isOpen: false, data: null, isLoading: false });
+    }
+  }, [selectedPeriod, user, lang]);
+
   useEffect(() => {
     if (user?.subscription === 'premium' && pendingAction?.type === 'analyze_sector') {
       handleAnalyzeSector(pendingAction.payload, true);
       setPendingAction(null);
     }
-  }, [user, pendingAction]);
+    // FIX: Add handleAnalyzeSector to the dependency array to prevent stale closures.
+  }, [user, pendingAction, handleAnalyzeSector]);
 
 
-  const handleLogin = () => {
-    const mockUser: User = {
-      name: 'Demo User',
-      picture: `https://api.dicebear.com/8.x/avataaars/svg?seed=demo-user`,
-      subscription: 'free',
-    };
-    setUser(mockUser);
-    localStorage.setItem('trend-analyzer-user', JSON.stringify(mockUser));
+  const handleAuthSuccess = (authenticatedUser: User) => {
+    setUser(authenticatedUser);
+    localStorage.setItem('trend-analyzer-user', JSON.stringify(authenticatedUser));
+    setIsAuthModalOpen(false);
   };
 
   const handleLogout = () => {
@@ -81,36 +105,42 @@ function App() {
     }
   };
 
+  const handleSaveSettings = (updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem('trend-analyzer-user', JSON.stringify(updatedUser));
+  };
+
+  const handleResetAdvancedOptions = () => {
+    setCustomRegions('');
+    setCustomKeywords('');
+    setCustomExcludedKeywords('');
+    setCustomIndustries('');
+  };
+
   const handleGenerateReport = useCallback(async () => {
     setIsLoadingReport(true);
     setError(null);
     setReportData(null);
     try {
-      const data = await generateTrendReport(selectedPeriod, user?.subscription ?? 'free', lang);
+       const options = {
+        regions: customRegions,
+        keywords: customKeywords,
+        excludedKeywords: customExcludedKeywords,
+        industries: customIndustries
+      };
+      const data = await generateTrendReport(selectedPeriod, user?.subscription ?? 'free', lang, options);
       setReportData(data);
+
+      if (user?.notificationsEnabled && user?.email) {
+          setToastMessage(t('notifications.reportReady', { email: user.email }));
+      }
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
     } finally {
       setIsLoadingReport(false);
     }
-  }, [selectedPeriod, user, lang]);
-
-  const handleAnalyzeSector = useCallback(async (sectorName: string, force: boolean = false) => {
-    if (!force && user?.subscription !== 'premium') {
-      setPendingAction({ type: 'analyze_sector', payload: sectorName });
-      setIsSubscriptionModalOpen(true);
-      return;
-    }
-
-    setDetailedAnalysisModal({ isOpen: true, data: null, isLoading: true });
-    try {
-      const data = await generateDetailedAnalysis(sectorName, selectedPeriod, lang);
-      setDetailedAnalysisModal({ isOpen: true, data: data, isLoading: false });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred while analyzing the sector.');
-      setDetailedAnalysisModal({ isOpen: false, data: null, isLoading: false });
-    }
-  }, [selectedPeriod, user, lang]);
+  }, [selectedPeriod, user, lang, customRegions, customKeywords, customExcludedKeywords, customIndustries, t]);
 
   const handleAnalyzeProduct = useCallback(async (productName: string) => {
     setDetailedAnalysisModal({ isOpen: false, data: null, isLoading: false });
@@ -141,35 +171,40 @@ function App() {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center bg-gray-800 rounded-full">
-                <button onClick={() => setLang('fr')} className={`px-3 py-1 text-sm font-semibold rounded-full ${lang === 'fr' ? 'bg-cyan-500 text-white' : 'text-gray-400'}`}>FR</button>
-                <button onClick={() => setLang('en')} className={`px-3 py-1 text-sm font-semibold rounded-full ${lang === 'en' ? 'bg-cyan-500 text-white' : 'text-gray-400'}`}>EN</button>
+                <button onClick={() => setLang('fr')} disabled={isLoadingReport} className={`px-3 py-1 text-sm font-semibold rounded-full disabled:opacity-50 disabled:cursor-not-allowed ${lang === 'fr' ? 'bg-cyan-500 text-white' : 'text-gray-400'}`}>FR</button>
+                <button onClick={() => setLang('en')} disabled={isLoadingReport} className={`px-3 py-1 text-sm font-semibold rounded-full disabled:opacity-50 disabled:cursor-not-allowed ${lang === 'en' ? 'bg-cyan-500 text-white' : 'text-gray-400'}`}>EN</button>
             </div>
             {user ? (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <div className="text-right">
                     <p className="font-semibold text-white">{user.name}</p>
                     <div className={`text-xs font-bold px-2 py-0.5 rounded-full inline-block ${user.subscription === 'premium' ? 'bg-amber-500/20 text-amber-300' : 'bg-gray-700 text-gray-300'}`}>
                         {user.subscription === 'premium' ? t('subscription.statusPremium') : t('subscription.statusFree')}
                     </div>
                     {user.subscription === 'free' && (
-                         <button onClick={() => setIsSubscriptionModalOpen(true)} className="text-xs text-cyan-400 hover:underline">{t('subscription.upgrade')}</button>
+                         <button onClick={() => setIsSubscriptionModalOpen(true)} disabled={isLoadingReport} className="text-xs text-cyan-400 hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline">{t('subscription.upgrade')}</button>
                     )}
                 </div>
                 <img src={user.picture} alt={user.name} className="w-12 h-12 rounded-full border-2 border-cyan-400 object-cover" />
+                 <button onClick={() => setIsSettingsModalOpen(true)} disabled={isLoadingReport} className="p-2 rounded-full bg-gray-700/50 hover:bg-gray-600/80 text-gray-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed" title={t('userSettings.title')}>
+                    <CogIcon className="w-6 h-6" />
+                </button>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 bg-gray-700 text-gray-300 font-semibold rounded-lg hover:bg-gray-600 transition-colors"
+                  disabled={isLoadingReport}
+                  className="px-4 py-2 bg-gray-700 text-gray-300 font-semibold rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('login.logout')}
                 </button>
               </div>
             ) : (
               <button
-                onClick={handleLogin}
-                className="inline-flex items-center gap-3 px-5 py-2.5 bg-white text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-200 transition-colors"
+                onClick={() => setIsAuthModalOpen(true)}
+                disabled={isLoadingReport}
+                className="inline-flex items-center gap-3 px-5 py-2.5 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <GoogleIcon className="w-5 h-5" />
-                <span>{t('login.button')}</span>
+                <ArrowRightOnRectangleIcon className="w-5 h-5" />
+                <span>{t('header.loginSignup')}</span>
               </button>
             )}
           </div>
@@ -229,7 +264,83 @@ function App() {
             <p className="text-gray-400">{t('app.subtitle')}</p>
           </div>
           <div className="flex flex-col items-center gap-6 mb-12">
-            <PeriodSelector selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
+            <PeriodSelector selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} disabled={isLoadingReport} />
+            
+             <div className="w-full max-w-4xl">
+                <button
+                    onClick={() => setIsAdvancedOptionsOpen(!isAdvancedOptionsOpen)}
+                    disabled={isLoadingReport}
+                    className="flex items-center justify-center gap-2 text-sm text-cyan-400 hover:text-cyan-300 w-full text-center py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {t('app.advancedOptions.title')}
+                    {isAdvancedOptionsOpen ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}
+                </button>
+                {isAdvancedOptionsOpen && (
+                    <div className="mt-4 p-6 bg-gray-800/50 border border-gray-700 rounded-lg space-y-4 animate-fade-in-down">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="customRegions" className="block text-sm font-medium text-gray-300 mb-1">{t('app.advancedOptions.regionsLabel')}</label>
+                                <input
+                                    type="text"
+                                    id="customRegions"
+                                    value={customRegions}
+                                    onChange={(e) => setCustomRegions(e.target.value)}
+                                    placeholder={t('app.advancedOptions.regionsPlaceholder')}
+                                    disabled={isLoadingReport}
+                                    className="w-full bg-gray-900/70 border border-gray-600 rounded-md px-3 py-2 text-white focus:ring-cyan-500 focus:border-cyan-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="customIndustries" className="block text-sm font-medium text-gray-300 mb-1">{t('app.advancedOptions.industriesLabel')}</label>
+                                <input
+                                    type="text"
+                                    id="customIndustries"
+                                    value={customIndustries}
+                                    onChange={(e) => setCustomIndustries(e.target.value)}
+                                    placeholder={t('app.advancedOptions.industriesPlaceholder')}
+                                    disabled={isLoadingReport}
+                                    className="w-full bg-gray-900/70 border border-gray-600 rounded-md px-3 py-2 text-white focus:ring-cyan-500 focus:border-cyan-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="customKeywords" className="block text-sm font-medium text-gray-300 mb-1">{t('app.advancedOptions.keywordsLabel')}</label>
+                                <input
+                                    type="text"
+                                    id="customKeywords"
+                                    value={customKeywords}
+                                    onChange={(e) => setCustomKeywords(e.target.value)}
+                                    placeholder={t('app.advancedOptions.keywordsPlaceholder')}
+                                    disabled={isLoadingReport}
+                                    className="w-full bg-gray-900/70 border border-gray-600 rounded-md px-3 py-2 text-white focus:ring-cyan-500 focus:border-cyan-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="customExcludedKeywords" className="block text-sm font-medium text-gray-300 mb-1">{t('app.advancedOptions.excludedKeywordsLabel')}</label>
+                                <input
+                                    type="text"
+                                    id="customExcludedKeywords"
+                                    value={customExcludedKeywords}
+                                    onChange={(e) => setCustomExcludedKeywords(e.target.value)}
+                                    placeholder={t('app.advancedOptions.excludedKeywordsPlaceholder')}
+                                    disabled={isLoadingReport}
+                                    className="w-full bg-gray-900/70 border border-gray-600 rounded-md px-3 py-2 text-white focus:ring-cyan-500 focus:border-cyan-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                />
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <button
+                                onClick={handleResetAdvancedOptions}
+                                disabled={isLoadingReport}
+                                className="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <RefreshIcon className="w-4 h-4" />
+                                {t('app.advancedOptions.resetButton')}
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
             <button
               onClick={handleGenerateReport}
               disabled={isLoadingReport}
@@ -295,6 +406,24 @@ function App() {
         onClose={() => setIsSubscriptionModalOpen(false)}
         onSubscribe={handleSubscribe}
       />
+
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
+
+      {user && (
+        <UserSettingsModal
+            isOpen={isSettingsModalOpen}
+            user={user}
+            onClose={() => setIsSettingsModalOpen(false)}
+            onSave={handleSaveSettings}
+        />
+      )}
+
+      {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage(null)} />}
+
     </div>
   );
 }

@@ -1,6 +1,7 @@
 {
   "header": {
-    "title": "Analyseur de Tendances de Marché"
+    "title": "Analyseur de Tendances de Marché",
+    "loginSignup": "Connexion / Inscription"
   },
   "home": {
     "title": "Anticipez les Marchés de Demain, Aujourd'hui",
@@ -21,11 +22,37 @@
   },
   "app": {
     "title": "Lancez votre Analyse",
-    "subtitle": "Sélectionnez une période pour découvrir les tendances futures du marché."
+    "subtitle": "Sélectionnez une période pour découvrir les tendances futures du marché.",
+    "advancedOptions": {
+      "title": "Options Avancées",
+      "regionsLabel": "Régions d'Intérêt",
+      "regionsPlaceholder": "ex: Europe, Asie du Sud-Est",
+      "keywordsLabel": "Mots-clés à privilégier",
+      "keywordsPlaceholder": "ex: durable, IA",
+      "excludedKeywordsLabel": "Mots-clés à exclure",
+      "excludedKeywordsPlaceholder": "ex: plastique, fast-fashion",
+      "industriesLabel": "Secteurs à prioriser",
+      "industriesPlaceholder": "ex: énergies renouvelables, fintech",
+      "resetButton": "Réinitialiser les filtres"
+    }
   },
   "login": {
-    "button": "Se connecter avec Google",
     "logout": "Déconnexion"
+  },
+  "authModal": {
+    "loginTitle": "Connexion",
+    "signupTitle": "Inscription",
+    "emailLabel": "Adresse e-mail",
+    "passwordLabel": "Mot de passe",
+    "nameLabel": "Nom complet",
+    "loginButton": "Se connecter",
+    "signupButton": "S'inscrire",
+    "switchToSignup": "Pas de compte ? S'inscrire",
+    "switchToLogin": "Déjà un compte ? Se connecter",
+    "loginError": "E-mail ou mot de passe invalide.",
+    "signupError": "Un utilisateur avec cet e-mail existe déjà.",
+    "googleLogin": "Se connecter avec Google",
+    "orDivider": "OU"
   },
   "subscription": {
     "statusFree": "Gratuit",
@@ -49,7 +76,17 @@
   "sectorCard": {
     "regions": "Régions clés",
     "reasons": "Raisons",
-    "analyzeButton": "Analyse Détaillée"
+    "analyzeButton": "Analyse Détaillée",
+    "searchPlaceholder": "Rechercher un produit...",
+    "supplierSearchPlaceholder": "Filtrer par fournisseur...",
+    "suppliersLabel": "Fournisseurs",
+    "noProductsFound": "Aucun produit trouvé.",
+    "sort": {
+      "demand": "Trier par demande",
+      "profitability": "Trier par rentabilité",
+      "asc": "Croissant",
+      "desc": "Décroissant"
+    }
   },
   "detailedAnalysis": {
     "title": "Analyse Détaillée",
@@ -76,21 +113,37 @@
     },
     "planPro": {
       "title": "Pro",
-      "feature1": "Rapport Premium (20 produits/secteur)",
-      "feature2": "Analyses de secteur détaillées",
-      "feature3": "20 suggestions de produits ciblées",
-      "feature4": "Analyses de produits complètes",
-      "feature5": "Export des données en CSV",
-      "feature6": "Support par email"
+      "price": "€49",
+      "features": [
+        "Rapport Premium (20 produits/secteur)",
+        "Analyses de secteur détaillées",
+        "20 suggestions de produits ciblées",
+        "Analyses de produits complètes",
+        "Export des données en CSV",
+        "Support par email"
+      ]
     },
     "planEnterprise": {
       "title": "Entreprise",
-      "feature1": "Tous les avantages du plan Pro",
-      "feature2": "Analyses de tendances personnalisées",
-      "feature3": "Accès API pour intégration",
-      "feature4": "Consultant dédié",
-      "feature5": "Support prioritaire 24/7"
+      "price": "€199",
+      "features": [
+        "Tous les avantages du plan Pro",
+        "Analyses de tendances personnalisées",
+        "Accès API pour intégration",
+        "Consultant dédié",
+        "Support prioritaire 24/7"
+      ]
     }
+  },
+  "userSettings": {
+    "title": "Paramètres Utilisateur",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "vous@exemple.com",
+    "notificationsLabel": "Activer les notifications par e-mail pour les nouveaux rapports",
+    "saveButton": "Enregistrer les modifications"
+  },
+  "notifications": {
+    "reportReady": "Une notification pour votre nouveau rapport a été envoyée à {email}."
   },
   "common": {
     "exportCsv": "Exporter en CSV",
@@ -100,7 +153,20 @@
     "suppliers": "Fournisseurs",
     "potentialSuppliers": "Fournisseurs Potentiels",
     "keyRegions": "Régions Clés",
-    "risks": "Risques et Défis"
+    "risks": "Risques et Défis",
+    "profitabilityScore": "Score de Rentabilité",
+    "marketEntryDifficulty": "Difficulté d'Entrée",
+    "difficulty": {
+      "low": "Faible",
+      "medium": "Moyenne",
+      "high": "Élevée",
+      "faible": "Faible",
+      "moyenne": "Moyenne",
+      "élevée": "Élevée",
+      "moyen": "Moyen",
+      "élevé": "Élevé"
+    },
+    "cancel": "Annuler"
   },
   "csv": {
     "report": {
@@ -108,18 +174,23 @@
       "sector": "Secteur",
       "product": "Produit",
       "demandRate": "Taux de Demande (%)",
+      "profitabilityScore": "Score de Rentabilité (sur 10)",
       "keyRegions": "Régions Clés",
       "reasons": "Raisons de la Demande",
+      "suppliers": "Fournisseurs",
       "globalAnalysis": "Analyse Globale"
     },
     "detailed": {
       "filename": "analyse-detaillee-{sectorName}.csv",
       "inDepthAnalysis": "Analyse Approfondie du Secteur",
       "productSuggestions": "Suggestions de Produits",
+      "description": "Description",
       "targetAudience": "Public Cible",
       "sellingPoints": "Arguments de Vente",
       "priceRange": "Fourchette de Prix",
-      "potentialSuppliers": "Fournisseurs Potentiels"
+      "potentialSuppliers": "Fournisseurs Potentiels",
+      "profitabilityScore": "Score de Rentabilité (sur 10)",
+      "marketEntryDifficulty": "Difficulté d'Entrée sur le Marché"
     },
     "product": {
       "filename": "analyse-produit-{productName}.csv",

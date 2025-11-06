@@ -3,6 +3,8 @@ export interface ProductTrend {
   demandRate: number;
   regions: string;
   reasons: string;
+  profitabilityScore: number;
+  suppliers: string[];
 }
 
 export interface Sector {
@@ -17,10 +19,13 @@ export interface ReportData {
 
 export interface DetailedProductSuggestion {
   name: string;
+  description: string;
   targetAudience: string;
   sellingPoints: string[];
   priceRange: string;
   suppliers: string[];
+  profitabilityScore: number;
+  marketEntryDifficulty: string;
 }
 
 export interface DetailedSectorAnalysis {
@@ -38,4 +43,12 @@ export interface ProductAnalysis {
   priceRange: string;
   suppliers: string[];
   risks: string[];
+}
+
+export interface User {
+  name: string;
+  picture: string;
+  subscription: 'free' | 'premium';
+  email?: string;
+  notificationsEnabled?: boolean;
 }

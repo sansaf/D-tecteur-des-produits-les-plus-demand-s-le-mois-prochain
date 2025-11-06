@@ -24,10 +24,12 @@ const getTrendReportSchema = (lang: 'fr' | 'en', numProducts: number) => ({
                 properties: {
                   name: { type: Type.STRING, description: lang === 'fr' ? "Nom du produit." : "Product name." },
                   demandRate: { type: Type.NUMBER, description: lang === 'fr' ? "Taux de demande estimé en pourcentage (ex: 15 pour 15%)." : "Estimated demand rate as a percentage (e.g., 15 for 15%)." },
+                  profitabilityScore: { type: Type.NUMBER, description: lang === 'fr' ? "Un score de rentabilité estimé sur 10." : "An estimated profitability score out of 10." },
                   regions: { type: Type.STRING, description: lang === 'fr' ? "Régions du monde où la demande sera la plus forte." : "Regions of the world where demand will be strongest." },
-                  reasons: { type: Type.STRING, description: lang === 'fr' ? "Raisons clés de la demande (facteurs économiques, saisonniers, culturels, médiatiques)." : "Key reasons for demand (economic, seasonal, cultural, media factors)." }
+                  reasons: { type: Type.STRING, description: lang === 'fr' ? "Raisons clés de la demande (facteurs économiques, saisonniers, culturels, médiatiques)." : "Key reasons for demand (economic, seasonal, cultural, media factors)." },
+                  suppliers: { type: Type.ARRAY, items: { type: Type.STRING }, description: lang === 'fr' ? "Une liste de 2-3 exemples de fournisseurs potentiels ou de pôles de fabrication." : "A list of 2-3 examples of potential suppliers or manufacturing hubs." }
                 },
-                required: ["name", "demandRate", "regions", "reasons"]
+                required: ["name", "demandRate", "regions", "reasons", "profitabilityScore", "suppliers"]
               }
             }
           },
@@ -42,14 +44,53 @@ const getTrendReportSchema = (lang: 'fr' | 'en', numProducts: number) => ({
     required: ["sectors", "globalAnalysis"]
 });
 
+export interface TrendReportOptions {
+  regions?: string;
+  keywords?: string;
+  excludedKeywords?: string;
+  industries?: string;
+}
 
-export async function generateTrendReport(periodInMonths: number, subscription: 'free' | 'premium' = 'free', language: 'fr' | 'en'): Promise<ReportData> {
+export async function generateTrendReport(
+  periodInMonths: number,
+  subscription: 'free' | 'premium' = 'free',
+  language: 'fr' | 'en',
+  options: TrendReportOptions = {}
+): Promise<ReportData> {
   const numProducts = subscription === 'premium' ? 20 : 3;
   const trendReportSchema = getTrendReportSchema(language, numProducts);
   
-  const prompt = language === 'fr' ? 
-    `Analyse les tendances de consommation mondiales et identifie les produits qui seront les plus demandés dans les ${periodInMonths} prochains mois. Fournis une analyse pour 3 à 5 secteurs clés, avec ${numProducts} produits par secteur. Pour chaque produit, estime le taux de demande, les régions clés et les raisons de cette tendance. Termine par une analyse globale du marché.` :
-    `Analyze global consumer trends and identify the products that will be most in demand in the next ${periodInMonths} months. Provide an analysis for 3 to 5 key sectors, with ${numProducts} products per sector. For each product, estimate the demand rate, key regions, and the reasons for this trend. Conclude with a global market analysis.`;
+  const basePrompt = language === 'fr' ? 
+    `Analyse les tendances de consommation mondiales et identifie les produits qui seront les plus demandés dans les ${periodInMonths} prochains mois. Fournis une analyse pour 3 à 5 secteurs clés, avec ${numProducts} produits par secteur. Pour chaque produit, estime le taux de demande, un score de rentabilité sur 10, les régions clés, les raisons de cette tendance, et une liste de 2-3 exemples de fournisseurs ou de pôles de fabrication. Termine par une analyse globale du marché.` :
+    `Analyze global consumer trends and identify the products that will be most in demand in the next ${periodInMonths} months. Provide an analysis for 3 to 5 key sectors, with ${numProducts} products per sector. For each product, estimate the demand rate, a profitability score out of 10, key regions, the reasons for this trend, and a list of 2-3 examples of suppliers or manufacturing hubs. Conclude with a global market analysis.`;
+
+  const customizationPrompts: string[] = [];
+  if (options.regions) {
+    customizationPrompts.push(language === 'fr' ?
+      `Concentre-toi spécifiquement sur les tendances dans les régions suivantes : ${options.regions}.` :
+      `Focus specifically on trends within the following regions: ${options.regions}.`
+    );
+  }
+  if (options.industries) {
+     customizationPrompts.push(language === 'fr' ?
+      `Priorise l'analyse sur ces secteurs : ${options.industries}.` :
+      `Prioritize the analysis on these industries: ${options.industries}.`
+    );
+  }
+  if (options.keywords) {
+    customizationPrompts.push(language === 'fr' ?
+      `Porte une attention particulière aux produits et tendances liés à ces mots-clés : ${options.keywords}.` :
+      `Pay special attention to products and trends related to these keywords: ${options.keywords}.`
+    );
+  }
+  if (options.excludedKeywords) {
+    customizationPrompts.push(language === 'fr' ?
+      `Exclus les produits et tendances liés à ces mots-clés : ${options.excludedKeywords}.` :
+      `Exclude products and trends related to these keywords: ${options.excludedKeywords}.`
+    );
+  }
+
+  const prompt = [basePrompt, ...customizationPrompts].join('\n\n');
 
   try {
     const response = await ai.models.generateContent({
@@ -83,12 +124,15 @@ const getDetailedAnalysisSchema = (lang: 'fr' | 'en') => ({
                 type: Type.OBJECT,
                 properties: {
                     name: { type: Type.STRING, description: lang === 'fr' ? "Nom du produit suggéré." : "Name of the suggested product." },
+                    description: { type: Type.STRING, description: lang === 'fr' ? "Une brève description du produit (1-2 phrases)." : "A brief description of the product (1-2 sentences)." },
                     targetAudience: { type: Type.STRING, description: lang === 'fr' ? "Description du public cible pour ce produit." : "Description of the target audience for this product." },
                     sellingPoints: { type: Type.ARRAY, items: { type: Type.STRING }, description: lang === 'fr' ? "Arguments de vente clés pour le produit." : "Key selling points for the product." },
                     priceRange: { type: Type.STRING, description: lang === 'fr' ? "Fourchette de prix suggérée (ex: '€50 - €150')." : "Suggested price range (e.g., '$50 - $150')." },
                     suppliers: { type: Type.ARRAY, items: { type: Type.STRING }, description: lang === 'fr' ? "Une liste de 2-3 exemples de fournisseurs potentiels ou de pôles de fabrication pour ce produit." : "A list of 2-3 examples of potential suppliers or manufacturing hubs for this product." },
+                    profitabilityScore: { type: Type.NUMBER, description: lang === 'fr' ? "Un score de rentabilité estimé sur 10." : "An estimated profitability score out of 10." },
+                    marketEntryDifficulty: { type: Type.STRING, description: lang === 'fr' ? "La difficulté d'entrée sur le marché (ex: 'Faible', 'Moyenne', 'Élevée')." : "The market entry difficulty (e.g., 'Low', 'Medium', 'High')." },
                 },
-                required: ["name", "targetAudience", "sellingPoints", "priceRange", "suppliers"]
+                required: ["name", "description", "targetAudience", "sellingPoints", "priceRange", "suppliers", "profitabilityScore", "marketEntryDifficulty"]
             }
         }
     },
@@ -98,8 +142,8 @@ const getDetailedAnalysisSchema = (lang: 'fr' | 'en') => ({
 
 export async function generateDetailedAnalysis(sectorName: string, periodInMonths: number, language: 'fr' | 'en'): Promise<DetailedSectorAnalysis> {
     const prompt = language === 'fr' ?
-        `Fournis une analyse détaillée pour le secteur "${sectorName}" pour les ${periodInMonths} prochains mois. L'analyse doit inclure une vue d'ensemble approfondie du marché, les opportunités, les défis. Suggère également 20 produits spécifiques à vendre, avec pour chacun : un public cible, des arguments de vente clés, une fourchette de prix, et une liste de 2-3 exemples des meilleurs fournisseurs ou pôles de fabrication.` :
-        `Provide a detailed analysis for the "${sectorName}" sector for the next ${periodInMonths} months. The analysis should include an in-depth market overview, opportunities, and challenges. Also, suggest 20 specific products to sell, each with: a target audience, key selling points, a price range, and a list of 2-3 examples of top suppliers or manufacturing hubs.`;
+        `Fournis une analyse détaillée pour le secteur "${sectorName}" pour les ${periodInMonths} prochains mois. L'analyse doit inclure une vue d'ensemble approfondie du marché, les opportunités, les défis. Suggère également 20 produits spécifiques à vendre, avec pour chacun : une brève description (1-2 phrases), un public cible, des arguments de vente clés, une fourchette de prix, une liste de 2-3 exemples des meilleurs fournisseurs ou pôles de fabrication, un score de rentabilité sur 10, et une difficulté d'entrée sur le marché (Faible, Moyenne, ou Élevée).` :
+        `Provide a detailed analysis for the "${sectorName}" sector for the next ${periodInMonths} months. The analysis should include an in-depth market overview, opportunities, and challenges. Also, suggest 20 specific products to sell, each with: a brief description (1-2 sentences), a target audience, key selling points, a price range, a list of 2-3 examples of top suppliers or manufacturing hubs, a profitability score out of 10, and a market entry difficulty (Low, Medium, or High).`;
     
     try {
         const response = await ai.models.generateContent({

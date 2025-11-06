@@ -1,6 +1,7 @@
 {
   "header": {
-    "title": "Market Trend Analyzer"
+    "title": "Market Trend Analyzer",
+    "loginSignup": "Login / Sign Up"
   },
   "home": {
     "title": "Anticipate Tomorrow's Markets, Today",
@@ -21,11 +22,37 @@
   },
   "app": {
     "title": "Start Your Analysis",
-    "subtitle": "Select a time frame to uncover future market trends."
+    "subtitle": "Select a time frame to uncover future market trends.",
+    "advancedOptions": {
+      "title": "Advanced Options",
+      "regionsLabel": "Regions of Interest",
+      "regionsPlaceholder": "e.g., Europe, Southeast Asia",
+      "keywordsLabel": "Keywords to focus on",
+      "keywordsPlaceholder": "e.g., sustainable, AI-powered",
+      "excludedKeywordsLabel": "Keywords to exclude",
+      "excludedKeywordsPlaceholder": "e.g., plastic, fast-fashion",
+      "industriesLabel": "Industries to prioritize",
+      "industriesPlaceholder": "e.g., renewable energy, fintech",
+      "resetButton": "Reset Filters"
+    }
   },
   "login": {
-    "button": "Sign in with Google",
     "logout": "Log out"
+  },
+  "authModal": {
+    "loginTitle": "Login",
+    "signupTitle": "Sign Up",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "nameLabel": "Full Name",
+    "loginButton": "Log In",
+    "signupButton": "Sign Up",
+    "switchToSignup": "No account? Sign up",
+    "switchToLogin": "Already have an account? Log in",
+    "loginError": "Invalid email or password.",
+    "signupError": "A user with this email already exists.",
+    "googleLogin": "Sign in with Google",
+    "orDivider": "OR"
   },
   "subscription": {
     "statusFree": "Free",
@@ -49,7 +76,17 @@
   "sectorCard": {
     "regions": "Key Regions",
     "reasons": "Reasons",
-    "analyzeButton": "Detailed Analysis"
+    "analyzeButton": "Detailed Analysis",
+    "searchPlaceholder": "Search for a product...",
+    "supplierSearchPlaceholder": "Filter by supplier...",
+    "suppliersLabel": "Suppliers",
+    "noProductsFound": "No products found.",
+    "sort": {
+      "demand": "Sort by demand",
+      "profitability": "Sort by profitability",
+      "asc": "Ascending",
+      "desc": "Descending"
+    }
   },
   "detailedAnalysis": {
     "title": "Detailed Analysis",
@@ -76,21 +113,37 @@
     },
     "planPro": {
       "title": "Pro",
-      "feature1": "Premium Report (20 products/sector)",
-      "feature2": "Detailed sector analyses",
-      "feature3": "20 targeted product suggestions",
-      "feature4": "Comprehensive product analyses",
-      "feature5": "CSV data export",
-      "feature6": "Email support"
+      "price": "$49",
+      "features": [
+        "Premium Report (20 products/sector)",
+        "Detailed sector analyses",
+        "20 targeted product suggestions",
+        "Comprehensive product analyses",
+        "CSV data export",
+        "Email support"
+      ]
     },
     "planEnterprise": {
       "title": "Enterprise",
-      "feature1": "All the benefits of the Pro plan",
-      "feature2": "Custom trend analyses",
-      "feature3": "API access for integration",
-      "feature4": "Dedicated consultant",
-      "feature5": "24/7 priority support"
+      "price": "$199",
+      "features": [
+        "All the benefits of the Pro plan",
+        "Custom trend analyses",
+        "API access for integration",
+        "Dedicated consultant",
+        "24/7 priority support"
+      ]
     }
+  },
+  "userSettings": {
+    "title": "User Settings",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "notificationsLabel": "Enable email notifications for new reports",
+    "saveButton": "Save Changes"
+  },
+  "notifications": {
+    "reportReady": "A notification for your new report has been sent to {email}."
   },
   "common": {
     "exportCsv": "Export to CSV",
@@ -100,7 +153,15 @@
     "suppliers": "Suppliers",
     "potentialSuppliers": "Potential Suppliers",
     "keyRegions": "Key Regions",
-    "risks": "Risks & Challenges"
+    "risks": "Risks & Challenges",
+    "profitabilityScore": "Profitability Score",
+    "marketEntryDifficulty": "Market Entry Difficulty",
+    "difficulty": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "cancel": "Cancel"
   },
   "csv": {
     "report": {
@@ -108,18 +169,23 @@
       "sector": "Sector",
       "product": "Product",
       "demandRate": "Demand Rate (%)",
+      "profitabilityScore": "Profitability Score (out of 10)",
       "keyRegions": "Key Regions",
       "reasons": "Reasons for Demand",
+      "suppliers": "Suppliers",
       "globalAnalysis": "Global Analysis"
     },
     "detailed": {
       "filename": "detailed-analysis-{sectorName}.csv",
       "inDepthAnalysis": "In-Depth Sector Analysis",
       "productSuggestions": "Product Suggestions",
+      "description": "Description",
       "targetAudience": "Target Audience",
       "sellingPoints": "Selling Points",
       "priceRange": "Price Range",
-      "potentialSuppliers": "Potential Suppliers"
+      "potentialSuppliers": "Potential Suppliers",
+      "profitabilityScore": "Profitability Score (out of 10)",
+      "marketEntryDifficulty": "Market Entry Difficulty"
     },
     "product": {
       "filename": "product-analysis-{productName}.csv",
