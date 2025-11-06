@@ -1,4 +1,3 @@
-
 export interface ProductTrend {
   name: string;
   demandRate: number;
@@ -25,7 +24,18 @@ export interface DetailedProductSuggestion {
 }
 
 export interface DetailedSectorAnalysis {
-  sectorName: string;
+  sectorName:string;
   inDepthAnalysis: string;
   productSuggestions: DetailedProductSuggestion[];
+}
+
+export interface ProductAnalysis {
+  productName: string;
+  marketAnalysis: string;
+  keyRegions: string[];
+  targetAudience: string;
+  sellingPoints: string[];
+  priceRange: string;
+  suppliers: string[];
+  risks: string[];
 }

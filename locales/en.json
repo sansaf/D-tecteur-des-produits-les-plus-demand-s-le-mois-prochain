@@ -1,0 +1,136 @@
+{
+  "header": {
+    "title": "Market Trend Analyzer"
+  },
+  "home": {
+    "title": "Anticipate Tomorrow's Markets, Today",
+    "subtitle": "Turn uncertainty into opportunity. Our AI analyzes millions of signals to reveal which products and sectors will surge, before anyone else.",
+    "cta": "Start Analysis",
+    "feature1": {
+      "title": "Advanced AI Analysis",
+      "description": "Harness the power of AI to get accurate demand forecasts and deep market insights."
+    },
+    "feature2": {
+      "title": "Data-Driven Decisions",
+      "description": "Stop guessing. Make strategic business moves backed by real-time global data."
+    },
+    "feature3": {
+      "title": "Actionable Reports",
+      "description": "Receive detailed analyses and concrete product suggestions, ready for you to implement."
+    }
+  },
+  "app": {
+    "title": "Start Your Analysis",
+    "subtitle": "Select a time frame to uncover future market trends."
+  },
+  "login": {
+    "button": "Sign in with Google",
+    "logout": "Log out"
+  },
+  "subscription": {
+    "statusFree": "Free",
+    "statusPremium": "Premium",
+    "upgrade": "Upgrade to Premium"
+  },
+  "periodSelector": {
+    "month": "{count} Months"
+  },
+  "generateReport": {
+    "button": "Generate Trend Report",
+    "loading": "Generating..."
+  },
+  "spinner": {
+    "loading": "Analyzing trends..."
+  },
+  "globalAnalysis": {
+    "title": "Global Market Analysis",
+    "exportButton": "Export Full Report"
+  },
+  "sectorCard": {
+    "regions": "Key Regions",
+    "reasons": "Reasons",
+    "analyzeButton": "Detailed Analysis"
+  },
+  "detailedAnalysis": {
+    "title": "Detailed Analysis",
+    "inDepthTitle": "In-Depth Analysis",
+    "suggestionsTitle": "Product Suggestions",
+    "analyzeProductButton": "Analyze this Product"
+  },
+  "productAnalysis": {
+    "title": "Product Analysis",
+    "marketAnalysis": "Market Analysis"
+  },
+  "subscriptionModal": {
+    "title": "Upgrade Your Insights",
+    "subtitle": "Unlock in-depth analyses and exclusive information to make the best business decisions.",
+    "recommended": "Recommended",
+    "month": "month",
+    "currentPlan": "Your Current Plan",
+    "choosePlan": "Choose Plan",
+    "planFree": {
+      "title": "Free",
+      "feature1": "Global trend report",
+      "feature2": "Analysis of 3 top products per sector",
+      "feature3": "General market overview"
+    },
+    "planPro": {
+      "title": "Pro",
+      "feature1": "Premium Report (20 products/sector)",
+      "feature2": "Detailed sector analyses",
+      "feature3": "20 targeted product suggestions",
+      "feature4": "Comprehensive product analyses",
+      "feature5": "CSV data export",
+      "feature6": "Email support"
+    },
+    "planEnterprise": {
+      "title": "Enterprise",
+      "feature1": "All the benefits of the Pro plan",
+      "feature2": "Custom trend analyses",
+      "feature3": "API access for integration",
+      "feature4": "Dedicated consultant",
+      "feature5": "24/7 priority support"
+    }
+  },
+  "common": {
+    "exportCsv": "Export to CSV",
+    "targetAudience": "Target Audience",
+    "sellingPoints": "Selling Points",
+    "priceRange": "Price Range",
+    "suppliers": "Suppliers",
+    "potentialSuppliers": "Potential Suppliers",
+    "keyRegions": "Key Regions",
+    "risks": "Risks & Challenges"
+  },
+  "csv": {
+    "report": {
+      "filename": "trend-report-{period}-months.csv",
+      "sector": "Sector",
+      "product": "Product",
+      "demandRate": "Demand Rate (%)",
+      "keyRegions": "Key Regions",
+      "reasons": "Reasons for Demand",
+      "globalAnalysis": "Global Analysis"
+    },
+    "detailed": {
+      "filename": "detailed-analysis-{sectorName}.csv",
+      "inDepthAnalysis": "In-Depth Sector Analysis",
+      "productSuggestions": "Product Suggestions",
+      "targetAudience": "Target Audience",
+      "sellingPoints": "Selling Points",
+      "priceRange": "Price Range",
+      "potentialSuppliers": "Potential Suppliers"
+    },
+    "product": {
+      "filename": "product-analysis-{productName}.csv",
+      "product": "Product",
+      "marketAnalysis": "Market Analysis",
+      "keyRegions": "Key Regions",
+      "targetAudience": "Target Audience",
+      "sellingPoints": "Selling Points",
+      "priceRange": "Price Range",
+      "suppliers": "Suppliers",
+      "risks": "Risks"
+    }
+  }
+}

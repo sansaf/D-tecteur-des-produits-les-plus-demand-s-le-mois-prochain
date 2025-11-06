@@ -1,0 +1,136 @@
+{
+  "header": {
+    "title": "Analyseur de Tendances de Marché"
+  },
+  "home": {
+    "title": "Anticipez les Marchés de Demain, Aujourd'hui",
+    "subtitle": "Transformez l'incertitude en opportunité. Notre IA analyse des millions de signaux pour vous révéler les produits et secteurs qui vont exploser, avant tout le monde.",
+    "cta": "Commencer l'Analyse",
+    "feature1": {
+      "title": "Analyse par IA Avancée",
+      "description": "Exploitez la puissance de l'IA pour obtenir des prévisions de demande précises et des insights de marché."
+    },
+    "feature2": {
+      "title": "Décisions Basées sur les Données",
+      "description": "Arrêtez de deviner. Prenez des décisions stratégiques éclairées par des données mondiales en temps réel."
+    },
+    "feature3": {
+      "title": "Rapports Actionnables",
+      "description": "Recevez des analyses détaillées et des suggestions de produits concrètes, prêtes à être mises en œuvre."
+    }
+  },
+  "app": {
+    "title": "Lancez votre Analyse",
+    "subtitle": "Sélectionnez une période pour découvrir les tendances futures du marché."
+  },
+  "login": {
+    "button": "Se connecter avec Google",
+    "logout": "Déconnexion"
+  },
+  "subscription": {
+    "statusFree": "Gratuit",
+    "statusPremium": "Premium",
+    "upgrade": "Passer à Premium"
+  },
+  "periodSelector": {
+    "month": "{count} Mois"
+  },
+  "generateReport": {
+    "button": "Générer le Rapport de Tendances",
+    "loading": "Génération en cours..."
+  },
+  "spinner": {
+    "loading": "Analyse des tendances en cours..."
+  },
+  "globalAnalysis": {
+    "title": "Analyse Globale du Marché",
+    "exportButton": "Exporter le Rapport Complet"
+  },
+  "sectorCard": {
+    "regions": "Régions clés",
+    "reasons": "Raisons",
+    "analyzeButton": "Analyse Détaillée"
+  },
+  "detailedAnalysis": {
+    "title": "Analyse Détaillée",
+    "inDepthTitle": "Analyse Approfondie",
+    "suggestionsTitle": "Suggestions de Produits",
+    "analyzeProductButton": "Analyser ce Produit"
+  },
+  "productAnalysis": {
+    "title": "Analyse Produit",
+    "marketAnalysis": "Analyse du Marché"
+  },
+  "subscriptionModal": {
+    "title": "Passez à la vitesse supérieure",
+    "subtitle": "Débloquez des analyses approfondies et des informations exclusives pour prendre les meilleures décisions commerciales.",
+    "recommended": "Recommandé",
+    "month": "mois",
+    "currentPlan": "Votre Plan Actuel",
+    "choosePlan": "Choisir ce plan",
+    "planFree": {
+      "title": "Gratuit",
+      "feature1": "Rapport de tendances global",
+      "feature2": "Analyse de 3 produits phares par secteur",
+      "feature3": "Vue d'ensemble du marché"
+    },
+    "planPro": {
+      "title": "Pro",
+      "feature1": "Rapport Premium (20 produits/secteur)",
+      "feature2": "Analyses de secteur détaillées",
+      "feature3": "20 suggestions de produits ciblées",
+      "feature4": "Analyses de produits complètes",
+      "feature5": "Export des données en CSV",
+      "feature6": "Support par email"
+    },
+    "planEnterprise": {
+      "title": "Entreprise",
+      "feature1": "Tous les avantages du plan Pro",
+      "feature2": "Analyses de tendances personnalisées",
+      "feature3": "Accès API pour intégration",
+      "feature4": "Consultant dédié",
+      "feature5": "Support prioritaire 24/7"
+    }
+  },
+  "common": {
+    "exportCsv": "Exporter en CSV",
+    "targetAudience": "Public Cible",
+    "sellingPoints": "Arguments de vente",
+    "priceRange": "Fourchette de Prix",
+    "suppliers": "Fournisseurs",
+    "potentialSuppliers": "Fournisseurs Potentiels",
+    "keyRegions": "Régions Clés",
+    "risks": "Risques et Défis"
+  },
+  "csv": {
+    "report": {
+      "filename": "rapport-tendances-{period}-mois.csv",
+      "sector": "Secteur",
+      "product": "Produit",
+      "demandRate": "Taux de Demande (%)",
+      "keyRegions": "Régions Clés",
+      "reasons": "Raisons de la Demande",
+      "globalAnalysis": "Analyse Globale"
+    },
+    "detailed": {
+      "filename": "analyse-detaillee-{sectorName}.csv",
+      "inDepthAnalysis": "Analyse Approfondie du Secteur",
+      "productSuggestions": "Suggestions de Produits",
+      "targetAudience": "Public Cible",
+      "sellingPoints": "Arguments de Vente",
+      "priceRange": "Fourchette de Prix",
+      "potentialSuppliers": "Fournisseurs Potentiels"
+    },
+    "product": {
+      "filename": "analyse-produit-{productName}.csv",
+      "product": "Produit",
+      "marketAnalysis": "Analyse de Marché",
+      "keyRegions": "Régions Clés",
+      "targetAudience": "Public Cible",
+      "sellingPoints": "Arguments de Vente",
+      "priceRange": "Fourchette de Prix",
+      "suppliers": "Fournisseurs",
+      "risks": "Risques"
+    }
+  }
+}
