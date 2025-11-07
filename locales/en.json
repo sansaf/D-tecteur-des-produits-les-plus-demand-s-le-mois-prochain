@@ -33,7 +33,12 @@
       "excludedKeywordsPlaceholder": "e.g., plastic, fast-fashion",
       "industriesLabel": "Industries to prioritize",
       "industriesPlaceholder": "e.g., renewable energy, fintech",
-      "resetButton": "Reset Filters"
+      "resetButton": "Reset Filters",
+      "generationMode": {
+        "label": "Generation Mode",
+        "reliable": "Reliable",
+        "creative": "Creative"
+      }
     }
   },
   "login": {

@@ -49,6 +49,7 @@ export interface TrendReportOptions {
   keywords?: string;
   excludedKeywords?: string;
   industries?: string;
+  generationMode?: 'reliable' | 'creative';
 }
 
 export async function generateTrendReport(
@@ -92,6 +93,8 @@ export async function generateTrendReport(
 
   const prompt = [basePrompt, ...customizationPrompts].join('\n\n');
 
+  const temperature = options.generationMode === 'creative' ? 1 : 0;
+
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -99,6 +102,7 @@ export async function generateTrendReport(
       config: {
         responseMimeType: "application/json",
         responseSchema: trendReportSchema,
+        temperature: temperature
       },
     });
 

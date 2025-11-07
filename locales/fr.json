@@ -33,7 +33,12 @@
       "excludedKeywordsPlaceholder": "ex: plastique, fast-fashion",
       "industriesLabel": "Secteurs à prioriser",
       "industriesPlaceholder": "ex: énergies renouvelables, fintech",
-      "resetButton": "Réinitialiser les filtres"
+      "resetButton": "Réinitialiser les filtres",
+      "generationMode": {
+        "label": "Mode de Génération",
+        "reliable": "Fiable",
+        "creative": "Créatif"
+      }
     }
   },
   "login": {

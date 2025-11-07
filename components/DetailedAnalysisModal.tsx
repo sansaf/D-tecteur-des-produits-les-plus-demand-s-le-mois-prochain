@@ -87,7 +87,13 @@ const DetailedAnalysisModal: React.FC<DetailedAnalysisModalProps> = ({ isLoading
 
                         <div className="p-6 flex flex-col flex-grow">
                           <div className="flex-grow space-y-4">
-                            <h4 className="text-xl font-bold text-white">{product.name}</h4>
+                            <h4
+                              className="text-xl font-bold text-white cursor-pointer hover:text-cyan-400 transition-colors"
+                              onClick={() => onAnalyzeProduct(product.name)}
+                              title={t('detailedAnalysis.analyzeProductButton')}
+                            >
+                              {product.name}
+                            </h4>
                             <p className="text-gray-400 text-sm italic">{product.description}</p>
                             
                             <div className="pt-2 text-sm space-y-3">

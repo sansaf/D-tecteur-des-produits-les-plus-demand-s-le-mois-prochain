@@ -8,6 +8,7 @@ import SubscriptionModal from './components/SubscriptionModal';
 import UserSettingsModal from './components/UserSettingsModal';
 import AuthModal from './components/AuthModal';
 import Toast from './components/Toast';
+import ToggleSwitch from './components/ToggleSwitch';
 import { ReportData, DetailedSectorAnalysis, ProductAnalysis, User } from './types';
 import { generateTrendReport, generateDetailedAnalysis, generateProductAnalysis } from './services/geminiService';
 import { exportReportToCsv } from './utils/csvExporter';
@@ -35,6 +36,7 @@ function App() {
   const [customKeywords, setCustomKeywords] = useState('');
   const [customExcludedKeywords, setCustomExcludedKeywords] = useState('');
   const [customIndustries, setCustomIndustries] = useState('');
+  const [generationMode, setGenerationMode] = useState<'reliable' | 'creative'>('reliable');
 
   const [detailedAnalysisModal, setDetailedAnalysisModal] = useState<{
     isOpen: boolean;
@@ -115,6 +117,7 @@ function App() {
     setCustomKeywords('');
     setCustomExcludedKeywords('');
     setCustomIndustries('');
+    setGenerationMode('reliable');
   };
 
   const handleGenerateReport = useCallback(async () => {
@@ -126,7 +129,8 @@ function App() {
         regions: customRegions,
         keywords: customKeywords,
         excludedKeywords: customExcludedKeywords,
-        industries: customIndustries
+        industries: customIndustries,
+        generationMode: generationMode,
       };
       const data = await generateTrendReport(selectedPeriod, user?.subscription ?? 'free', lang, options);
       setReportData(data);
@@ -140,7 +144,7 @@ function App() {
     } finally {
       setIsLoadingReport(false);
     }
-  }, [selectedPeriod, user, lang, customRegions, customKeywords, customExcludedKeywords, customIndustries, t]);
+  }, [selectedPeriod, user, lang, customRegions, customKeywords, customExcludedKeywords, customIndustries, generationMode, t]);
 
   const handleAnalyzeProduct = useCallback(async (productName: string) => {
     setDetailedAnalysisModal({ isOpen: false, data: null, isLoading: false });
@@ -314,7 +318,7 @@ function App() {
                                     className="w-full bg-gray-900/70 border border-gray-600 rounded-md px-3 py-2 text-white focus:ring-cyan-500 focus:border-cyan-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                 />
                             </div>
-                            <div>
+                             <div>
                                 <label htmlFor="customExcludedKeywords" className="block text-sm font-medium text-gray-300 mb-1">{t('app.advancedOptions.excludedKeywordsLabel')}</label>
                                 <input
                                     type="text"
@@ -327,15 +331,27 @@ function App() {
                                 />
                             </div>
                         </div>
-                        <div className="text-right">
-                            <button
-                                onClick={handleResetAdvancedOptions}
-                                disabled={isLoadingReport}
-                                className="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <RefreshIcon className="w-4 h-4" />
-                                {t('app.advancedOptions.resetButton')}
-                            </button>
+                        <div className="border-t border-gray-700/50 pt-4 flex justify-between items-center">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">{t('app.advancedOptions.generationMode.label')}</label>
+                                <ToggleSwitch
+                                    value={generationMode}
+                                    onChange={setGenerationMode}
+                                    option1={{ label: t('app.advancedOptions.generationMode.reliable'), value: 'reliable' }}
+                                    option2={{ label: t('app.advancedOptions.generationMode.creative'), value: 'creative' }}
+                                    disabled={isLoadingReport}
+                                />
+                            </div>
+                            <div className="text-right">
+                                <button
+                                    onClick={handleResetAdvancedOptions}
+                                    disabled={isLoadingReport}
+                                    className="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <RefreshIcon className="w-4 h-4" />
+                                    {t('app.advancedOptions.resetButton')}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
