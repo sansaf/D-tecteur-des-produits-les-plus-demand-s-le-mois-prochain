@@ -12,7 +12,7 @@ import ToggleSwitch from './components/ToggleSwitch';
 import { ReportData, DetailedSectorAnalysis, ProductAnalysis, User } from './types';
 import { generateTrendReport, generateDetailedAnalysis, generateProductAnalysis } from './services/geminiService';
 import { exportReportToCsv } from './utils/csvExporter';
-import { DownloadIcon, BrainIcon, ChartPieIcon, DocumentReportIcon, ChevronDownIcon, ChevronUpIcon, RefreshIcon, CogIcon, ArrowRightOnRectangleIcon } from './components/IconComponents';
+import { DownloadIcon, BrainIcon, ChartPieIcon, DocumentReportIcon, ChevronDownIcon, ChevronUpIcon, RefreshIcon, CogIcon, ArrowRightOnRectangleIcon, ShareIcon } from './components/IconComponents';
 import { useI18n } from './hooks/useI18n';
 
 function App() {
@@ -29,7 +29,9 @@ function App() {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ type: 'analyze_sector', payload: string } | null>(null);
+  
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'info' | 'success'>('info');
 
   const [isAdvancedOptionsOpen, setIsAdvancedOptionsOpen] = useState(false);
   const [customRegions, setCustomRegions] = useState('');
@@ -136,6 +138,7 @@ function App() {
       setReportData(data);
 
       if (user?.notificationsEnabled && user?.email) {
+          setToastType('info');
           setToastMessage(t('notifications.reportReady', { email: user.email }));
       }
 
@@ -162,11 +165,45 @@ function App() {
   const handleScrollToApp = () => {
     mainAppRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+  
+  const handleShare = useCallback(async (shareData: {title: string, text: string}) => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareData.title,
+          text: shareData.text,
+          url: url,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setToastType('success');
+        setToastMessage(t('notifications.linkCopied'));
+      } catch (err) {
+        console.error('Failed to copy: ', err);
+      }
+    }
+  }, [t]);
 
+  const Footer = () => (
+    <footer className="mt-24 py-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+        <div className="flex justify-center gap-6 mb-4">
+            <a href="#" className="hover:text-gray-300 transition-colors">{t('footer.about')}</a>
+            <a href="#" className="hover:text-gray-300 transition-colors">{t('footer.contact')}</a>
+            <a href="#" className="hover:text-gray-300 transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="hover:text-gray-300 transition-colors">{t('footer.terms')}</a>
+        </div>
+        <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
+    </footer>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white font-sans">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-900 text-white font-sans flex flex-col">
+      <div className="container mx-auto px-4 py-8 flex-grow">
         <header className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div className="text-left">
             <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
@@ -375,13 +412,25 @@ function App() {
                 <div className="text-center p-8 bg-gray-800/50 rounded-2xl border border-gray-700">
                     <h2 className="text-3xl font-bold text-cyan-300 mb-4">{t('globalAnalysis.title')}</h2>
                     <p className="text-gray-300 max-w-4xl mx-auto leading-relaxed">{reportData.globalAnalysis}</p>
-                    <button
-                        onClick={() => exportReportToCsv(reportData, selectedPeriod, t)}
-                        className="mt-6 inline-flex items-center gap-2 text-sm bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-                    >
-                        <DownloadIcon className="w-5 h-5" />
-                        {t('globalAnalysis.exportButton')}
-                    </button>
+                    <div className="mt-6 flex justify-center items-center gap-4">
+                        <button
+                            onClick={() => exportReportToCsv(reportData, selectedPeriod, t)}
+                            className="inline-flex items-center gap-2 text-sm bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                        >
+                            <DownloadIcon className="w-5 h-5" />
+                            {t('globalAnalysis.exportButton')}
+                        </button>
+                        <button
+                            onClick={() => handleShare({
+                                title: t('share.mainReport.title'),
+                                text: t('share.mainReport.text', { period: selectedPeriod })
+                            })}
+                            className="inline-flex items-center gap-2 text-sm bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                        >
+                            <ShareIcon className="w-5 h-5" />
+                            {t('common.share')}
+                        </button>
+                    </div>
                 </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
                 {reportData.sectors.map((sector) => (
@@ -400,12 +449,15 @@ function App() {
         </main>
       </div>
 
+      <Footer />
+
       {detailedAnalysisModal.isOpen && (
         <DetailedAnalysisModal
           isLoading={detailedAnalysisModal.isLoading}
           analysisData={detailedAnalysisModal.data}
           onClose={() => setDetailedAnalysisModal({ isOpen: false, data: null, isLoading: false })}
           onAnalyzeProduct={handleAnalyzeProduct}
+          onShare={handleShare}
         />
       )}
 
@@ -414,6 +466,7 @@ function App() {
           isLoading={productAnalysisModal.isLoading}
           analysisData={productAnalysisModal.data}
           onClose={() => setProductAnalysisModal({ isOpen: false, data: null, isLoading: false })}
+          onShare={handleShare}
         />
       )}
 
@@ -438,7 +491,7 @@ function App() {
         />
       )}
 
-      {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage(null)} />}
+      {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage(null)} type={toastType} />}
 
     </div>
   );

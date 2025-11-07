@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProductAnalysis } from '../types';
 import LoadingSpinner from './LoadingSpinner';
-import { XIcon, DownloadIcon, ChartBarIcon, GlobeIcon, TargetIcon, LightbulbIcon, DollarIcon, SupplierIcon, ShieldExclamationIcon } from './IconComponents';
+import { XIcon, DownloadIcon, ChartBarIcon, GlobeIcon, TargetIcon, LightbulbIcon, DollarIcon, SupplierIcon, ShieldExclamationIcon, ShareIcon } from './IconComponents';
 import { exportProductAnalysisToCsv } from '../utils/csvExporter';
 import { useI18n } from '../hooks/useI18n';
 
@@ -9,9 +9,10 @@ interface ProductAnalysisModalProps {
   isLoading: boolean;
   analysisData: ProductAnalysis | null;
   onClose: () => void;
+  onShare: (shareData: {title: string, text: string}) => void;
 }
 
-const ProductAnalysisModal: React.FC<ProductAnalysisModalProps> = ({ isLoading, analysisData, onClose }) => {
+const ProductAnalysisModal: React.FC<ProductAnalysisModalProps> = ({ isLoading, analysisData, onClose, onShare }) => {
   const { t } = useI18n();
   if (!analysisData && !isLoading) return null;
 
@@ -22,13 +23,25 @@ const ProductAnalysisModal: React.FC<ProductAnalysisModalProps> = ({ isLoading, 
           <h2 className="text-3xl font-bold text-amber-400">{t('productAnalysis.title')}: <span className="text-white">{analysisData?.productName}</span></h2>
            <div className="flex items-center gap-4">
             {analysisData && (
-              <button
-                onClick={() => exportProductAnalysisToCsv(analysisData, t)}
-                className="text-gray-400 hover:text-white transition-colors"
-                title={t('common.exportCsv')}
-              >
-                <DownloadIcon className="w-6 h-6" />
-              </button>
+              <>
+                <button
+                    onClick={() => onShare({
+                        title: t('share.product.title'),
+                        text: t('share.product.text', { productName: analysisData.productName })
+                    })}
+                    className="text-gray-400 hover:text-white transition-colors"
+                    title={t('common.share')}
+                >
+                    <ShareIcon className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => exportProductAnalysisToCsv(analysisData, t)}
+                  className="text-gray-400 hover:text-white transition-colors"
+                  title={t('common.exportCsv')}
+                >
+                  <DownloadIcon className="w-6 h-6" />
+                </button>
+              </>
             )}
             <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
               <XIcon className="w-8 h-8" />

@@ -148,9 +148,32 @@
     "saveButton": "Enregistrer les modifications"
   },
   "notifications": {
-    "reportReady": "Une notification pour votre nouveau rapport a été envoyée à {email}."
+    "reportReady": "Une notification pour votre nouveau rapport a été envoyée à {email}.",
+    "linkCopied": "Lien copié dans le presse-papiers !"
+  },
+  "footer": {
+    "copyright": "© {year} Analyseur de Tendances. Tous droits réservés.",
+    "about": "À propos",
+    "contact": "Contact",
+    "privacy": "Confidentialité",
+    "terms": "Conditions"
+  },
+  "share": {
+    "mainReport": {
+      "title": "Rapport de Tendances de Marché",
+      "text": "Découvrez cette analyse des tendances de marché pour les {period} prochains mois."
+    },
+    "sector": {
+      "title": "Analyse de Secteur Détaillée",
+      "text": "Analyse approfondie du secteur : {sectorName}."
+    },
+    "product": {
+      "title": "Analyse de Produit",
+      "text": "Analyse de marché complète pour le produit : {productName}."
+    }
   },
   "common": {
+    "share": "Partager",
     "exportCsv": "Exporter en CSV",
     "targetAudience": "Public Cible",
     "sellingPoints": "Arguments de vente",

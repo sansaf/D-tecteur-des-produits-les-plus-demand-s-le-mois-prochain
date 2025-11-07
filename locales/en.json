@@ -148,9 +148,32 @@
     "saveButton": "Save Changes"
   },
   "notifications": {
-    "reportReady": "A notification for your new report has been sent to {email}."
+    "reportReady": "A notification for your new report has been sent to {email}.",
+    "linkCopied": "Link copied to clipboard!"
+  },
+  "footer": {
+    "copyright": "© {year} Trend Analyzer. All rights reserved.",
+    "about": "About Us",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "share": {
+    "mainReport": {
+      "title": "Market Trend Report",
+      "text": "Check out this market trend analysis for the next {period} months."
+    },
+    "sector": {
+      "title": "Detailed Sector Analysis",
+      "text": "In-depth analysis of the {sectorName} sector."
+    },
+    "product": {
+      "title": "Product Analysis",
+      "text": "Comprehensive market analysis for the product: {productName}."
+    }
   },
   "common": {
+    "share": "Share",
     "exportCsv": "Export to CSV",
     "targetAudience": "Target Audience",
     "sellingPoints": "Selling Points",
