@@ -17,6 +17,13 @@ const DetailedAnalysisModal: React.FC<DetailedAnalysisModalProps> = ({ isLoading
   const { t } = useI18n();
   if (!analysisData && !isLoading) return null;
 
+  const handleProductKeyDown = (e: React.KeyboardEvent, productName: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onAnalyzeProduct(productName);
+    }
+  };
+
   const getDifficultyColor = (difficulty: string) => {
     if (!difficulty) return 'text-gray-300';
     const lowerDifficulty = difficulty.toLowerCase();
@@ -38,10 +45,10 @@ const DetailedAnalysisModal: React.FC<DetailedAnalysisModalProps> = ({ isLoading
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center items-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="detailed-analysis-title">
       <div className="bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center p-6 border-b border-gray-700">
-          <h2 className="text-3xl font-bold text-cyan-400">{t('detailedAnalysis.title')}: <span className="text-white">{analysisData?.sectorName}</span></h2>
+          <h2 id="detailed-analysis-title" className="text-3xl font-bold text-cyan-400">{t('detailedAnalysis.title')}: <span className="text-white">{analysisData?.sectorName}</span></h2>
           <div className="flex items-center gap-4">
             {analysisData && (
               <>
@@ -101,8 +108,11 @@ const DetailedAnalysisModal: React.FC<DetailedAnalysisModalProps> = ({ isLoading
                         <div className="p-6 flex flex-col flex-grow">
                           <div className="flex-grow space-y-4">
                             <h4
-                              className="text-xl font-bold text-white cursor-pointer hover:text-cyan-400 transition-colors"
+                              className="text-xl font-bold text-white cursor-pointer hover:text-cyan-400 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded"
                               onClick={() => onAnalyzeProduct(product.name)}
+                              onKeyDown={(e) => handleProductKeyDown(e, product.name)}
+                              role="button"
+                              tabIndex={0}
                               title={t('detailedAnalysis.analyzeProductButton')}
                             >
                               {product.name}

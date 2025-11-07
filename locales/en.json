@@ -82,8 +82,7 @@
     "regions": "Key Regions",
     "reasons": "Reasons",
     "analyzeButton": "Detailed Analysis",
-    "searchPlaceholder": "Search for a product...",
-    "supplierSearchPlaceholder": "Filter by supplier...",
+    "searchPlaceholder": "Search product or supplier...",
     "suppliersLabel": "Suppliers",
     "noProductsFound": "No products found.",
     "sort": {

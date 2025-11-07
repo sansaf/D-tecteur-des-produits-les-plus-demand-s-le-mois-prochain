@@ -17,10 +17,10 @@ const ProductAnalysisModal: React.FC<ProductAnalysisModalProps> = ({ isLoading, 
   if (!analysisData && !isLoading) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md flex justify-center items-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md flex justify-center items-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="product-analysis-title">
       <div className="bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center p-6 border-b border-gray-700">
-          <h2 className="text-3xl font-bold text-amber-400">{t('productAnalysis.title')}: <span className="text-white">{analysisData?.productName}</span></h2>
+          <h2 id="product-analysis-title" className="text-3xl font-bold text-amber-400">{t('productAnalysis.title')}: <span className="text-white">{analysisData?.productName}</span></h2>
            <div className="flex items-center gap-4">
             {analysisData && (
               <>

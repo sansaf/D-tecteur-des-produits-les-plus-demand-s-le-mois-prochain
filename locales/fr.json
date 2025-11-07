@@ -82,8 +82,7 @@
     "regions": "Régions clés",
     "reasons": "Raisons",
     "analyzeButton": "Analyse Détaillée",
-    "searchPlaceholder": "Rechercher un produit...",
-    "supplierSearchPlaceholder": "Filtrer par fournisseur...",
+    "searchPlaceholder": "Rechercher un produit ou fournisseur...",
     "suppliersLabel": "Fournisseurs",
     "noProductsFound": "Aucun produit trouvé.",
     "sort": {

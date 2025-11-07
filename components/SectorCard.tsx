@@ -18,7 +18,6 @@ const SectorCard: React.FC<SectorCardProps> = ({ sector, onAnalyze, isPremiumFea
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [searchQuery, setSearchQuery] = useState('');
-  const [supplierQuery, setSupplierQuery] = useState('');
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -34,17 +33,12 @@ const SectorCard: React.FC<SectorCardProps> = ({ sector, onAnalyze, isPremiumFea
   };
 
   const filteredAndSortedProducts = useMemo(() => {
+    const lowercasedQuery = searchQuery.toLowerCase();
+    
     let filtered = sector.products.filter(product =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      product.name.toLowerCase().includes(lowercasedQuery) || 
+      product.suppliers.some(supplier => supplier.toLowerCase().includes(lowercasedQuery))
     );
-
-    if (supplierQuery) {
-        filtered = filtered.filter(product => 
-            product.suppliers.some(supplier => 
-                supplier.toLowerCase().includes(supplierQuery.toLowerCase())
-            )
-        );
-    }
 
     if (sortKey === null) {
       return filtered;
@@ -58,7 +52,7 @@ const SectorCard: React.FC<SectorCardProps> = ({ sector, onAnalyze, isPremiumFea
       if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [sector.products, searchQuery, supplierQuery, sortKey, sortDirection]);
+  }, [sector.products, searchQuery, sortKey, sortDirection]);
 
 
   return (
@@ -69,6 +63,7 @@ const SectorCard: React.FC<SectorCardProps> = ({ sector, onAnalyze, isPremiumFea
             <button
               onClick={() => handleSort('demandRate')}
               title={t('sectorCard.sort.demand')}
+              aria-sort={sortKey === 'demandRate' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}
               className={`flex-shrink-0 flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors ${
                 sortKey === 'demandRate' ? 'bg-cyan-500 text-white' : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white'
               }`}
@@ -79,6 +74,7 @@ const SectorCard: React.FC<SectorCardProps> = ({ sector, onAnalyze, isPremiumFea
             <button
               onClick={() => handleSort('profitabilityScore')}
               title={t('sectorCard.sort.profitability')}
+              aria-sort={sortKey === 'profitabilityScore' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}
               className={`flex-shrink-0 flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors ${
                 sortKey === 'profitabilityScore' ? 'bg-amber-500 text-white' : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 hover:text-white'
               }`}
@@ -88,7 +84,7 @@ const SectorCard: React.FC<SectorCardProps> = ({ sector, onAnalyze, isPremiumFea
             </button>
         </div>
       </div>
-       <div className="space-y-3 mb-4">
+       <div className="mb-4">
             <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                     <SearchIcon className="w-5 h-5 text-gray-500" />
@@ -98,18 +94,6 @@ const SectorCard: React.FC<SectorCardProps> = ({ sector, onAnalyze, isPremiumFea
                     placeholder={t('sectorCard.searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-gray-900/70 border border-gray-600 rounded-md pl-10 pr-4 py-2 text-white placeholder-gray-500 focus:ring-cyan-500 focus:border-cyan-500 text-sm"
-                />
-            </div>
-            <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <SupplierIcon className="w-5 h-5 text-gray-500" />
-                </span>
-                <input
-                    type="text"
-                    placeholder={t('sectorCard.supplierSearchPlaceholder')}
-                    value={supplierQuery}
-                    onChange={(e) => setSupplierQuery(e.target.value)}
                     className="w-full bg-gray-900/70 border border-gray-600 rounded-md pl-10 pr-4 py-2 text-white placeholder-gray-500 focus:ring-cyan-500 focus:border-cyan-500 text-sm"
                 />
             </div>

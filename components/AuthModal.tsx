@@ -95,10 +95,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center items-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
       <div className="bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-down">
         <div className="flex justify-between items-center p-6 border-b border-gray-700">
-          <h2 className="text-2xl font-bold text-cyan-400">
+          <h2 id="auth-modal-title" className="text-2xl font-bold text-cyan-400">
             {view === 'login' ? t('authModal.loginTitle') : t('authModal.signupTitle')}
           </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
